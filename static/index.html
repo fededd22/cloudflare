@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F1330">
+<title>by_moon — لوحة جيزي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0F1330; --surface:#171C42; --surface-2:#232A5C; --line:#2D356A;
+  --text:#EEF1FB; --muted:#A9B2D6; --moon:#F3E7B5; --moon-ink:#11153A;
+  --ok:#86DDB0; --warn:#F2BE72; --bad:#F59A9A;
+  --f-display:"Reem Kufi","Noto Kufi Arabic","Segoe UI",Tahoma,sans-serif;
+  --f-body:"IBM Plex Sans Arabic","Noto Sans Arabic","Segoe UI",Tahoma,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:400 16px/1.65 var(--f-body);min-height:100dvh}
+button,input{font:inherit;color:inherit}
+h1,h2,h3,p{margin:0}
+:focus-visible{outline:2px solid var(--moon);outline-offset:3px}
+
+.top{display:flex;align-items:center;justify-content:space-between;max-width:560px;margin-inline:auto;
+  padding:calc(14px + env(safe-area-inset-top)) 20px 8px}
+.brand{display:flex;align-items:center;gap:8px;font:700 21px/1 var(--f-display)}
+.brand svg{width:22px;height:22px}
+.who{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.who .num{direction:ltr}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+.dot.wait{background:var(--warn)}
+
+main{max-width:560px;margin-inline:auto;padding:0 20px 120px}
+.block{padding:24px 0;border-top:1px solid var(--line)}
+.block:first-child{border-top:0}
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+h2{font:700 19px/1.3 var(--f-display)}
+.meta{color:var(--muted);font-size:14px}
+.ltr{direction:ltr;unicode-bidi:isolate}
+
+/* buttons */
+.btn{appearance:none;border:1px solid var(--line);background:transparent;border-radius:999px;
+  padding:10px 22px;min-height:44px;cursor:pointer;font-weight:500;transition:border-color .15s,background .15s}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--moon);border-color:var(--moon);color:var(--moon-ink);font-weight:600}
+.btn.primary:hover{background:#fff3c9}
+.btn.quiet{border-color:transparent;color:var(--muted);padding-inline:12px}
+.btn.quiet:hover{color:var(--text)}
+.btn.danger{color:var(--bad);border-color:transparent}
+.btn.full{width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.busy .act{pointer-events:none;opacity:.5}
+
+/* loading */
+.center{min-height:60dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center}
+.center svg{width:64px;height:64px}
+
+/* login */
+.login h1{font:700 30px/1.3 var(--f-display);margin:26px 0 8px}
+.login p.lead{color:var(--muted);margin-bottom:22px}
+.field{margin-bottom:14px}
+.field label{display:block;margin-bottom:6px;font-size:14px;color:var(--muted)}
+.field input{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:14px;
+  padding:14px 16px;font-size:20px;direction:ltr;text-align:left;letter-spacing:.5px}
+.field input::placeholder{color:#6A74A8}
+.err{color:var(--bad);min-height:1.6em;margin:6px 0 10px;font-size:15px}
+.note{background:var(--surface);border-inline-start:3px solid var(--warn);padding:10px 14px;border-radius:8px;margin-bottom:18px;font-size:15px}
+.linkrow{display:flex;justify-content:space-between;margin-top:10px}
+
+/* hero moon */
+.hero{text-align:center;padding:10px 0 30px}
+.moon{width:172px;height:172px;margin:0 auto 12px}
+.moon svg{width:100%;height:100%;display:block}
+.moon.ready{filter:drop-shadow(0 0 24px rgba(243,231,181,.4))}
+.hero h1{font:700 24px/1.3 var(--f-display)}
+.hero .state{margin:6px 0 2px;font-size:18px;font-weight:600}
+.hero .sub{color:var(--muted);font-size:14px;margin-bottom:18px;min-height:1.6em}
+
+/* balance */
+.big{font:700 46px/1.1 var(--f-display)}
+.big small{font-size:18px;color:var(--muted);font-weight:500;margin-inline-start:6px}
+.prod{padding:16px 0;border-top:1px solid var(--line)}
+.prod:first-of-type{margin-top:16px}
+.prod h3{font-size:16px;font-weight:600}
+.line{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:10px}
+.bar{height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin-top:6px}
+.bar>i{display:block;height:100%;background:var(--moon);border-radius:99px}
+.bar>i.mid{background:var(--warn)}
+.bar>i.low{background:var(--bad)}
+
+/* offers */
+.offer{display:grid;grid-template-columns:1fr auto;gap:2px 14px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.offer:first-of-type{border-top:0}
+.offer .name{font-weight:600}
+.offer .info{grid-column:1;color:var(--muted);font-size:14px}
+.offer .btn{grid-row:1 / span 2;grid-column:2;padding-inline:18px}
+.plain{padding:12px 0;border-top:1px solid var(--line)}
+.plain:first-of-type{border-top:0}
+
+/* account */
+.kv{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-top:1px solid var(--line)}
+.kv:first-of-type{border-top:0}
+.kv span:first-child{color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+
+/* nav */
+.nav{position:fixed;inset-inline:0;bottom:0;background:rgba(15,19,48,.95);backdrop-filter:blur(8px);
+  border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.nav-in{max-width:560px;margin-inline:auto;display:flex}
+.nav button{flex:1;appearance:none;background:none;border:0;border-top:2px solid transparent;
+  padding:13px 8px 12px;color:var(--muted);cursor:pointer;font-weight:500}
+.nav button[aria-selected="true"]{color:var(--moon);border-top-color:var(--moon)}
+
+/* toast + dialog */
+.toast{position:fixed;inset-inline:16px;max-width:528px;margin-inline:auto;bottom:calc(76px + env(safe-area-inset-bottom));
+  padding:12px 16px;border-radius:12px;font-weight:500;z-index:10}
+.toast.ok{background:#173A33;color:#CFF5E2;border:1px solid var(--ok)}
+.toast.err{background:#3A1F2E;color:#FFD5D5;border:1px solid var(--bad)}
+dialog{background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:18px;padding:22px;max-width:380px;width:calc(100% - 40px)}
+dialog::backdrop{background:rgba(5,7,20,.72)}
+dialog h3{font:700 19px/1.3 var(--f-display);margin-bottom:8px}
+dialog p{color:var(--muted);margin-bottom:18px}
+dialog .row{display:flex;gap:10px;justify-content:flex-end}
+
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" fill="#F3E7B5"/></svg>
+    <span>by_moon</span>
+  </div>
+  <div class="who" id="who" hidden><span class="num" id="whoPhone"></span><span class="dot" id="whoDot"></span></div>
+</header>
+
+<main>
+  <!-- تحميل / اتصال تلقائي -->
+  <section id="vLoad" class="center" aria-live="polite">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" fill="#F3E7B5"/></svg>
+    <p id="loadMsg">جارٍ الاتصال بحسابك…</p>
+    <button class="btn" id="retry" hidden>إعادة المحاولة</button>
+  </section>
+
+  <!-- تسجيل الدخول -->
+  <section id="vLogin" class="login" hidden>
+    <div id="step1">
+      <h1>ادخل برقم جيزي</h1>
+      <p class="lead">سنرسل لك رمزاً من 6 أرقام. بعد الدخول يبقى المتصفح متصلاً بحسابك ويُجدَّد تلقائياً.</p>
+      <div class="note" id="expiredNote" hidden>انتهت جلستك السابقة على هذا الرقم. أكّد الدخول بالرمز لإعادة الاتصال.</div>
+      <form id="phoneForm" novalidate>
+        <div class="field">
+          <label for="phone">رقم الهاتف</label>
+          <input id="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="07xxxxxxxx" maxlength="14">
+        </div>
+        <p class="err" id="err1" role="alert"></p>
+        <button class="btn primary full" id="sendBtn" type="submit">إرسال الرمز</button>
+      </form>
+      <div class="linkrow"><button class="btn quiet" id="backToApp" type="button" hidden>العودة إلى حسابي</button></div>
+    </div>
+
+    <div id="step2" hidden>
+      <h1>أدخل الرمز</h1>
+      <p class="lead">أُرسل الرمز إلى <span class="ltr" id="otpTo"></span></p>
+      <form id="otpForm" novalidate>
+        <div class="field">
+          <label for="otp">رمز التحقق</label>
+          <input id="otp" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="000000" maxlength="6">
+        </div>
+        <p class="err" id="err2" role="alert"></p>
+        <button class="btn primary full" id="otpBtn" type="submit">تأكيد الدخول</button>
+      </form>
+      <div class="linkrow"><button class="btn quiet" id="changePhone" type="button">تغيير الرقم</button></div>
+    </div>
+  </section>
+
+  <!-- التطبيق -->
+  <section id="vApp" hidden>
+    <div id="tab-home" role="tabpanel">
+      <div class="hero block">
+        <div class="moon" id="moon"></div>
+        <h1>الجائزة الأسبوعية 2GB</h1>
+        <p class="state" id="rState"></p>
+        <p class="sub" id="rSub"></p>
+        <button class="btn primary act" id="rBtn" type="button">تفعيل الجائزة</button>
+      </div>
+      <div class="block">
+        <div class="head"><h2>الرصيد والاستهلاك</h2><button class="btn quiet" id="balRefresh" type="button">تحديث</button></div>
+        <div id="balBody"></div>
+      </div>
+    </div>
+
+    <div id="tab-offers" role="tabpanel" hidden>
+      <div class="block">
+        <div class="head"><h2>تفعيل عرض</h2></div>
+        <p class="meta" style="margin-bottom:8px">العروض المدفوعة تُخصم من رصيدك عند التفعيل.</p>
+        <div id="offerList"></div>
+      </div>
+      <div class="block">
+        <div class="head"><h2>عروض متاحة لخطك</h2><button class="btn quiet" id="availBtn" type="button">عرض القائمة</button></div>
+        <div id="availBody"></div>
+      </div>
+    </div>
+
+    <div id="tab-account" role="tabpanel" hidden>
+      <div class="block">
+        <div class="head"><h2>الحساب</h2></div>
+        <div id="acct"></div>
+        <div class="actions">
+          <button class="btn act" id="acRefresh" type="button">تجديد الجلسة الآن</button>
+          <button class="btn act" id="acOther" type="button">استخدام رقم آخر</button>
+          <button class="btn danger act" id="acLogout" type="button">تسجيل الخروج</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav class="nav" id="nav" hidden aria-label="التنقل الرئيسي">
+  <div class="nav-in" role="tablist">
+    <button role="tab" data-tab="home" aria-selected="true">الرصيد</button>
+    <button role="tab" data-tab="offers" aria-selected="false">العروض</button>
+    <button role="tab" data-tab="account" aria-selected="false">الحساب</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<dialog id="confirm">
+  <form method="dialog">
+    <h3 id="cfTitle"></h3>
+    <p id="cfBody"></p>
+    <div class="row">
+      <button class="btn" value="no">إلغاء</button>
+      <button class="btn primary" value="yes">تفعيل العرض</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+
+function h(tag, props = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) {
+    if (k === "class") n.className = v;
+    else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) n.setAttribute(k, v === true ? "" : v);
+  }
+  for (const c of kids.flat()) if (c != null) n.append(c.nodeType ? c : document.createTextNode(c));
+  return n;
+}
+
+/* ---------- الحالة ---------- */
+let S = null;             // آخر حالة من الخادم
+let skew = 0;             // فرق الساعة بين الخادم والمتصفح
+let forceLogin = false;   // عرض شاشة الدخول لرقم آخر
+let tab = "home";
+let bal = { status: "idle" };
+let avail = { status: "idle" };
+let lastPoll = 0;
+let lastRewardAvail = null;
+const nowSec = () => (Date.now() + skew) / 1000;
+
+async function api(path, body) {
+  const opt = body === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
+  let res, data = {};
+  try { res = await fetch(path, { ...opt, credentials: "same-origin" }); }
+  catch { return { ok: false, error: "تعذّر الاتصال بالخادم. تحقق من الشبكة." }; }
+  try { data = await res.json(); } catch { data = { ok: false, error: "ردّ غير مفهوم من الخادم" }; }
+  if (data.code === "login_required" && S) { S.logged_in = false; route(); }
+  return data;
+}
+
+async function loadState() {
+  const d = await api("/api/state");
+  if (!d.ok) return d;
+  S = d;
+  skew = d.now * 1000 - Date.now();
+  lastPoll = Date.now();
+  return d;
+}
+
+/* ---------- أدوات ---------- */
+const localPhone = p => (p && p.startsWith("213")) ? "0" + p.slice(3) : (p || "");
+
+function fmtDur(sec) {
+  sec = Math.max(0, Math.floor(sec));
+  const d = Math.floor(sec / 86400), hr = Math.floor(sec % 86400 / 3600), m = Math.floor(sec % 3600 / 60);
+  const p = [];
+  if (d) p.push(`${d} يوم`);
+  if (hr) p.push(`${hr} ساعة`);
+  if (m && !d) p.push(`${m} دقيقة`);
+  return p.length ? p.join(" و ") : "أقل من دقيقة";
+}
+
+function fmtDate(ts) {
+  if (!ts) return "لم تُفعَّل بعد";
+  try { return new Date(ts * 1000).toLocaleString("ar", { numberingSystem: "latn", dateStyle: "medium", timeStyle: "short" }); }
+  catch { return new Date(ts * 1000).toLocaleString(); }
+}
+
+function fmtIso(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  return isNaN(d) ? "—" : fmtDate(d.getTime() / 1000);
+}
+
+let toastTimer;
+function toast(msg, kind = "ok") {
+  const t = $("#toast");
+  t.textContent = msg;
+  t.className = "toast " + kind;
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; }, 4500);
+}
+
+/* ---------- القمر ---------- */
+function moonMarkup(p) {
+  p = Math.min(1, Math.max(0, p));
+  const R = 68, c = 80;
+  let lit = "";
+  if (p >= 0.995) {
+    lit = `<circle cx="${c}" cy="${c}" r="${R}" fill="url(#lit)"/>`;
+  } else if (p > 0.005) {
+    const rx = (R * Math.abs(1 - 2 * p)).toFixed(2);
+    const sweep = p < 0.5 ? 0 : 1;
+    lit = `<path d="M${c} ${c - R}A${R} ${R} 0 0 1 ${c} ${c + R}A${rx} ${R} 0 0 ${sweep} ${c} ${c - R}Z" fill="url(#lit)"/>`;
+  }
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="مرحلة القمر تعبّر عن اكتمال المدة">
+    <defs><radialGradient id="lit" cx="40%" cy="38%" r="70%"><stop offset="0" stop-color="#FFF8D9"/><stop offset="1" stop-color="#E4D394"/></radialGradient></defs>
+    <circle cx="${c}" cy="${c}" r="${R}" fill="#1B2249" stroke="#3A4577" stroke-width="1"/>${lit}</svg>`;
+}
+
+function rewardInfo() {
+  const r = S.reward || { available: true, next_ts: null, last_ts: null, cooldown: 604800 };
+  const remaining = r.next_ts ? r.next_ts - nowSec() : 0;
+  const isAvail = !(remaining > 0);
+  const p = isAvail ? 1 : Math.min(1, Math.max(0, 1 - remaining / r.cooldown));
+  return { r, remaining, isAvail, p };
+}
+
+function renderReward() {
+  const { r, remaining, isAvail, p } = rewardInfo();
+  const moon = $("#moon");
+  moon.innerHTML = moonMarkup(p);
+  moon.classList.toggle("ready", isAvail);
+  $("#rState").textContent = isAvail ? "متاحة الآن" : `تكتمل بعد ${fmtDur(remaining)}`;
+  $("#rSub").textContent = isAvail
+    ? (r.last_ts ? `آخر تفعيل: ${fmtDate(r.last_ts)}` : "لم تُفعَّل بعد على هذا الرقم")
+    : `تُفعَّل من جديد في ${fmtDate(r.next_ts)}`;
+  const btn = $("#rBtn");
+  btn.disabled = !isAvail;
+  btn.textContent = isAvail ? "تفعيل الجائزة" : "مقفلة حتى اكتمال القمر";
+  lastRewardAvail = isAvail;
+}
+
+/* ---------- الرصيد ---------- */
+function renderBalance() {
+  const box = $("#balBody");
+  box.replaceChildren();
+  if (bal.status === "loading") return void box.append(h("p", { class: "meta", text: "جارٍ جلب الرصيد…" }));
+  if (bal.status === "error") return void box.append(h("p", { class: "err", text: bal.msg }));
+  if (bal.status !== "ok") return;
+  const d = bal.data;
+  box.append(h("div", { class: "big" }, h("span", { class: "ltr", text: String(d.main_balance) }), h("small", { text: "DA" })));
+  if (!d.products.length) return void box.append(h("p", { class: "meta", style: "margin-top:14px", text: "لا توجد باقات نشطة حالياً." }));
+  for (const p of d.products) {
+    const prod = h("div", { class: "prod" }, h("h3", { text: p.name }));
+    if (p.expiry) prod.append(h("div", { class: "meta", text: "ينتهي: " + p.expiry }));
+    if (!p.balances.length) prod.append(h("div", { class: "meta", text: "لا توجد بيانات استهلاك" }));
+    for (const b of p.balances) {
+      prod.append(h("div", { class: "line" },
+        h("span", { text: b.label }),
+        h("span", { class: "ltr" }, h("b", { text: b.remaining }), b.total ? ` / ${b.total}` : "")));
+      if (b.pct != null) {
+        const cls = b.pct > 50 ? "" : b.pct > 20 ? "mid" : "low";
+        prod.append(h("div", { class: "bar" }, h("i", { class: cls, style: `width:${b.pct.toFixed(1)}%` })));
+      }
+    }
+    box.append(prod);
+  }
+}
+
+async function loadBalance() {
+  bal = { status: "loading" }; renderBalance();
+  const d = await api("/api/balance");
+  bal = d.ok ? { status: "ok", data: d } : { status: "error", msg: d.error || "فشل جلب الرصيد" };
+  renderBalance();
+}
+
+/* ---------- العروض ---------- */
+function renderOffers() {
+  const list = $("#offerList");
+  list.replaceChildren();
+  const { isAvail, remaining } = rewardInfo();
+  for (const o of S.offers) {
+    const locked = o.key === S.weekly_key && !isAvail;
+    const btn = h("button", {
+      class: "btn act" + (locked ? "" : " primary"), type: "button", disabled: locked,
+      text: locked ? "مقفلة" : "تفعيل", onclick: () => activate(o.key)
+    });
+    list.append(h("div", { class: "offer" },
+      h("span", { class: "name", text: o.name }),
+      h("span", { class: "info", text: locked ? `متبقٍ ${fmtDur(remaining)}` : `المدة: ${o.duration} — السعر: ${o.price}` }),
+      btn));
+  }
+}
+
+function confirmDlg(o) {
+  return new Promise(res => {
+    const msg = `سيُفعَّل على الرقم ${localPhone(S.phone)} مقابل ${o.price}، ويُخصم من رصيدك إن كان كافياً.`;
+    const dlg = $("#confirm");
+    $("#cfTitle").textContent = o.name;
+    $("#cfBody").textContent = msg;
+    if (typeof dlg.showModal !== "function") return res(window.confirm(`${o.name}\n${msg}`));
+    dlg.returnValue = "";
+    dlg.addEventListener("close", () => res(dlg.returnValue === "yes"), { once: true });
+    dlg.showModal();
+  });
+}
+
+async function activate(key) {
+  const o = S.offers.find(x => x.key === key);
+  if (!o) return;
+  if (o.type !== "reward" && !(await confirmDlg(o))) return;
+  document.body.classList.add("busy");
+  const d = await api("/api/activate", { key });
+  document.body.classList.remove("busy");
+  if (d.reward) S.reward = d.reward;
+  if (d.ok) {
+    toast(`تم تفعيل ${o.name}`, "ok");
+    loadBalance();
+  } else {
+    toast(d.error || "فشل التفعيل", "err");
+  }
+  if (S.logged_in) renderApp();
+}
+
+async function loadAvail() {
+  avail = { status: "loading" }; renderAvail();
+  const d = await api("/api/available-offers");
+  avail = d.ok ? { status: "ok", offers: d.offers } : { status: "error", msg: d.error || "فشل جلب العروض" };
+  renderAvail();
+}
+
+function renderAvail() {
+  const box = $("#availBody");
+  box.replaceChildren();
+  if (avail.status === "loading") box.append(h("p", { class: "meta", text: "جارٍ جلب العروض…" }));
+  else if (avail.status === "error") box.append(h("p", { class: "err", text: avail.msg }));
+  else if (avail.status === "ok") {
+    if (!avail.offers.length) box.append(h("p", { class: "meta", text: "لا توجد عروض متاحة الآن." }));
+    for (const o of avail.offers) box.append(h("div", { class: "plain" }, h("div", { class: "name", style: "font-weight:600", text: o.name }),
+      h("div", { class: "meta", text: `السعر: ${o.price} — المدة: ${o.duration}` })));
+  }
+}
+
+/* ---------- الحساب ---------- */
+function tokenText() {
+  const left = (S.token_expiry_ts || 0) - nowSec();
+  if (left > 0) return `نشطة، متبقٍ ${Math.floor(left / 60)}د ${Math.floor(left % 60)}ث`;
+  return "قيد التجديد التلقائي";
+}
+
+function renderAccount() {
+  const box = $("#acct");
+  box.replaceChildren();
+  const row = (k, v, id) => box.append(h("div", { class: "kv" }, h("span", { text: k }), h("span", { id, text: v })));
+  row("الرقم", localPhone(S.phone));
+  row("الجلسة", tokenText(), "tokenLeft");
+  row("آخر دخول", fmtIso(S.last_login));
+  row("مرات الدخول", String(S.login_count || 0));
+  row("آخر تجديد", S.last_refresh ? fmtIso(S.last_refresh) : "لم يُجدَّد بعد");
+  row("مرات التجديد", String(S.refresh_count || 0));
+}
+
+function renderHeader() {
+  const logged = S && S.logged_in && !forceLogin;
+  $("#who").hidden = !logged;
+  if (!logged) return;
+  $("#whoPhone").textContent = localPhone(S.phone);
+  $("#whoDot").classList.toggle("wait", ((S.token_expiry_ts || 0) - nowSec()) <= 0);
+}
+
+function renderApp() {
+  renderHeader(); renderReward(); renderOffers(); renderAccount(); renderBalance(); renderAvail();
+}
+
+/* ---------- التنقل ---------- */
+function setTab(name) {
+  tab = name;
+  for (const t of ["home", "offers", "account"]) $("#tab-" + t).hidden = t !== name;
+  document.querySelectorAll(".nav button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === name)));
+  window.scrollTo({ top: 0 });
+}
+
+function route() {
+  $("#vLoad").hidden = true;
+  const inApp = !!(S && S.logged_in && !forceLogin);
+  $("#vApp").hidden = !inApp;
+  $("#nav").hidden = !inApp;
+  $("#vLogin").hidden = inApp;
+  renderHeader();
+  if (inApp) {
+    setTab(tab);
+    renderApp();
+    if (bal.status === "idle") loadBalance();
+  } else {
+    showLogin(forceLogin);
+  }
+}
+
+function showLogin(fresh) {
+  $("#step1").hidden = false; $("#step2").hidden = true;
+  $("#err1").textContent = ""; $("#err2").textContent = "";
+  $("#backToApp").hidden = !(S && S.logged_in);
+  const expired = !!(S && S.phone && !S.logged_in);
+  $("#expiredNote").hidden = !expired;
+  const input = $("#phone");
+  if (fresh) input.value = "";
+  else if (S && S.phone && !input.value) input.value = localPhone(S.phone);
+}
+
+/* ---------- تسجيل الدخول ---------- */
+$("#phoneForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const btn = $("#sendBtn"); btn.disabled = true; $("#err1").textContent = "";
+  const d = await api("/api/login/phone", { phone: $("#phone").value.trim() });
+  btn.disabled = false;
+  if (!d.ok) return void ($("#err1").textContent = d.error || "فشل إرسال الرمز");
+  $("#otpTo").textContent = localPhone(d.phone);
+  $("#step1").hidden = true; $("#step2").hidden = false;
+  $("#otp").value = ""; $("#otp").focus();
+});
+
+$("#otpForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const btn = $("#otpBtn"); btn.disabled = true; $("#err2").textContent = "";
+  const d = await api("/api/login/otp", { otp: $("#otp").value.trim() });
+  btn.disabled = false;
+  if (!d.ok) {
+    $("#err2").textContent = d.error || "فشل التحقق";
+    if (d.code === "restart") { $("#step2").hidden = true; $("#step1").hidden = false; }
+    return;
+  }
+  forceLogin = false; bal = { status: "idle" }; avail = { status: "idle" };
+  await loadState();
+  route();
+  toast("تم تسجيل الدخول. سيبقى الحساب متصلاً ويُجدَّد تلقائياً.", "ok");
+});
+
+$("#changePhone").addEventListener("click", () => { $("#step2").hidden = true; $("#step1").hidden = false; $("#phone").focus(); });
+$("#backToApp").addEventListener("click", () => { forceLogin = false; route(); });
+
+/* ---------- أحداث التطبيق ---------- */
+document.querySelectorAll(".nav button").forEach(b => b.addEventListener("click", () => setTab(b.dataset.tab)));
+$("#rBtn").addEventListener("click", () => activate(S.weekly_key));
+$("#balRefresh").addEventListener("click", loadBalance);
+$("#availBtn").addEventListener("click", loadAvail);
+
+$("#acRefresh").addEventListener("click", async () => {
+  document.body.classList.add("busy");
+  const d = await api("/api/refresh", {});
+  if (d.ok) { await loadState(); renderApp(); toast("تم تجديد الجلسة", "ok"); }
+  else toast(d.error || "فشل التجديد. قد تحتاج إلى تسجيل الدخول من جديد.", "err");
+  document.body.classList.remove("busy");
+});
+
+$("#acOther").addEventListener("click", () => { forceLogin = true; route(); });
+
+$("#acLogout").addEventListener("click", async () => {
+  await api("/api/logout", {});
+  forceLogin = false; bal = { status: "idle" }; avail = { status: "idle" };
+  await loadState();
+  route();
+  toast("تم تسجيل الخروج", "ok");
+});
+
+/* ---------- دورة الحياة ---------- */
+async function poll() {
+  const wasLogged = !!(S && S.logged_in);
+  const d = await loadState();
+  if (!d.ok) return;
+  if (wasLogged !== S.logged_in) return route();
+  if (S.logged_in && !forceLogin) renderApp();
+}
+
+setInterval(() => {
+  if (!S || !S.logged_in || forceLogin) return;
+  const tl = $("#tokenLeft"); if (tl) tl.textContent = tokenText();
+  renderHeader();
+  const info = rewardInfo();
+  if (info.isAvail !== lastRewardAvail) { renderReward(); renderOffers(); }
+  else if (!info.isAvail) $("#rState").textContent = `تكتمل بعد ${fmtDur(info.remaining)}`;
+  if ((S.token_expiry_ts || 0) - nowSec() <= 0 && Date.now() - lastPoll > 8000) poll();
+}, 1000);
+
+setInterval(poll, 30000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) poll(); });
+
+async function boot() {
+  $("#vLoad").hidden = false; $("#retry").hidden = true;
+  $("#loadMsg").textContent = "جارٍ الاتصال بحسابك…";
+  const d = await loadState();
+  if (!d.ok) {
+    $("#loadMsg").textContent = d.error || "تعذّر الاتصال";
+    $("#retry").hidden = false;
+    return;
+  }
+  route();
+}
+$("#retry").addEventListener("click", boot);
+boot();
+</script>
+</body>
+</html>
